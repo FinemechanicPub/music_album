@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from albums.models import Album, AlbumTrack, Artist
+from albums.models import Album, AlbumTrack, Artist, Track
 
 
 @admin.register(Artist)
@@ -16,3 +16,8 @@ class TrackInline(admin.TabularInline):
 class AlbumAdmin(admin.ModelAdmin):
     list_display = ["title", "year"]
     inlines = [TrackInline]
+
+
+@admin.register(Track)
+class TrackAdmin(admin.ModelAdmin):
+    pass
