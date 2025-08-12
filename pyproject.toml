@@ -6,6 +6,7 @@ readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "django==4.2.23",
+    "django-filter>=25.1",
     "djangorestframework>=3.16.1",
     "uuid-utils>=0.11.0",
 ]
