@@ -19,7 +19,7 @@ class AlbumViewset(viewsets.ReadOnlyModelViewSet):
 
     def get_queryset(self):
         if self.action == "retrieve":
-            return super().get_queryset().prefetch_related("tracks")
+            return super().get_queryset().prefetch_related("albumtrack_set__track")
         return super().get_queryset()
 
     def get_serializer_class(self):
@@ -42,6 +42,11 @@ class TrackViewset(viewsets.ReadOnlyModelViewSet):
     queryset = Track.objects.order_by("title")
     serializer_class = TrackReferenceSerializer
     filterset_class = TrackFilter
+
+    def get_queryset(self):
+        if self.action == "retrieve":
+            return super().get_queryset().prefetch_related("albumtrack_set__album")
+        return super().get_queryset()
 
     def get_serializer_class(self):
         if self.action != "list":

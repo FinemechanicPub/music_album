@@ -1,13 +1,13 @@
 from rest_framework import serializers
 
-from albums.models import Album, AlbumTrack, Artist, Track
+from albums.models import Album, Artist, Track
 
 
 class TrackAlbumsSerializer(serializers.ModelSerializer):
     id = serializers.UUIDField(source="album.id")
 
     class Meta:
-        model = AlbumTrack
+        model = Album.tracks.through
         fields = ["id", "position"]
 
 
@@ -16,7 +16,7 @@ class TrackInAlbumSerializer(serializers.ModelSerializer):
     title = serializers.CharField(source="track.title")
 
     class Meta:
-        model = AlbumTrack
+        model = Album.tracks.through
         fields = ["position", "id", "title"]
 
 
