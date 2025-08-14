@@ -7,6 +7,7 @@ from rest_framework import routers
 
 from api import views
 
+app_name = "api"
 
 router_v1 = routers.DefaultRouter()
 router_v1.register("albums", views.AlbumViewset, basename="album")
