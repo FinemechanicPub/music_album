@@ -55,6 +55,11 @@ uv run manage.py migrate
 uv run manage.py runserver
 ```
 
+Тестовый набор данных находится в файле [albums.json](albums.json). Его можно загрузить в приложение командой
+```shell
+uv run manage.py import albums.json
+```
+
 ## Настройки приложения
 
 Приложение загружает следующие настройки из переменных окружения или из файла `.env`:
