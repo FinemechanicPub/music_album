@@ -1,0 +1,12 @@
+services:
+  setup:
+    build: .
+    image: music_album
+    container_name: album_backend
+    env_file:
+      - ./.env
+    ports:
+      - "8000:8000"
+    command: >
+      sh -c "python manage.py migrate && python manage.py import albums.json && gunicorn music_album.wsgi:application --bind 0.0.0.0:8000"
+    
