@@ -1,7 +1,7 @@
 [project]
 name = "musik-album"
 version = "0.1.0"
-description = "Add your description here"
+description = "Albums and tracks catalog"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
