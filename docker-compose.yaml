@@ -8,4 +8,4 @@ services:
     ports:
       - "8000:8000"
     command: >
-      sh -c "python manage.py migrate && python manage.py collectstatic && python manage.py import albums.json && gunicorn music_album.wsgi:application --bind 0.0.0.0:8000"    
+      sh -c "python manage.py migrate && python manage.py collectstatic --no-input && python manage.py import albums.json && gunicorn music_album.wsgi:application --bind 0.0.0.0:8000"    
