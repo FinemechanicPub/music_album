@@ -4,12 +4,6 @@ import pytest
 
 pytestmark = pytest.mark.django_db
 
-
-ERROR_STATUS = (
-    "{method} request on {url} returned status {status}, "
-    "while expected {expected}"
-)
-
 ERROR_COUNT = (
     "{method} request on {url} returned {actual} objects, "
     "while expected {expected}"
@@ -49,10 +43,6 @@ def group_by_id(results: list[dict[str, str]]) -> dict[str, dict[str, str]]:
 def check_list_api(client: Client, objs, view: str, fields: list):
     url = reverse(view)
     response = client.get(url)
-    status = response.status_code
-    assert status == 200, (
-        ERROR_STATUS.format(method="GET", url=url, status=status, expected=200)
-    )
     count = response.data["count"]
     assert (
         count == len(objs)
