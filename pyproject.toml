@@ -17,4 +17,9 @@ dependencies = [
 [dependency-groups]
 dev = [
     "black>=25.1.0",
+    "pytest-django>=4.11.1",
 ]
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "music_album.settings"
+python_files = ["tests.py", "test_*.py", "*_tests.py"]
