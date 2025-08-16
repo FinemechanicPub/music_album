@@ -12,7 +12,7 @@ from api.serializers import (
 )
 
 
-class AlbumViewset(viewsets.ReadOnlyModelViewSet):
+class AlbumViewset(viewsets.ModelViewSet):
     queryset = Album.objects.select_related("artist").order_by("title")
     serializer_class = AlbumSerializer
     filterset_class = AlbumFilter
@@ -28,7 +28,7 @@ class AlbumViewset(viewsets.ReadOnlyModelViewSet):
         return super().get_serializer_class()
 
 
-class ArtistViewset(viewsets.ReadOnlyModelViewSet):
+class ArtistViewset(viewsets.ModelViewSet):
     queryset = Artist.objects.order_by("name")
     serializer_class = ArtistReferenceSerializer
 
@@ -38,7 +38,7 @@ class ArtistViewset(viewsets.ReadOnlyModelViewSet):
         return super().get_serializer_class()
 
 
-class TrackViewset(viewsets.ReadOnlyModelViewSet):
+class TrackViewset(viewsets.ModelViewSet):
     queryset = Track.objects.order_by("title")
     serializer_class = TrackReferenceSerializer
     filterset_class = TrackFilter
