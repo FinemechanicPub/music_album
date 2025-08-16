@@ -38,6 +38,11 @@ INSTALLED_APPS = [
     'drf_spectacular',
 ]
 
+if DEBUG:
+    INSTALLED_APPS.extend([
+        'django_extensions',
+    ])
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
