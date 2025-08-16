@@ -1,8 +1,12 @@
+import json
 from django.test import Client
 from django.urls import reverse
 import pytest
 
+from albums.models import Album
+
 pytestmark = pytest.mark.django_db
+
 
 ERROR_COUNT = (
     "{method} request on {url} returned {actual} objects, " "while expected {expected}"
@@ -18,7 +22,12 @@ ERROR_OBJECT_FIELD = (
 
 ERROR_OBJECT_INDENTITY = (
     "{method} request on {url} created object '{obj}' with "
-    "id={id}, while expected {expected}"
+    "id={id}, while expected {expected_id}"
+)
+
+ERROR_OBJECT_INDENTITIES = (
+    "{method} request on {url} created a collection of objects "
+    "with unexpected identities"
 )
 
 MISCONFIGURATION = (
@@ -122,4 +131,22 @@ def test_album_get(client, albums):
         for albumtrack in album.albumtrack_set.all():
             response_track = response_tracks[str(albumtrack.track_id)]
             check_entity(response.request, albumtrack, response_track, ["position"])
-            check_enity(url, albumtrack.track, response_track, ["title"])
+            check_entity(response.request, albumtrack.track, response_track, ["title"])
+
+
+def test_album_create(client, albums_data):
+    album_data_1, album_data_2 = albums_data
+    url = reverse("api:album-list")
+    response = client.post(
+        url, json.dumps(album_data_1), content_type="application/json"
+    )
+    new_id = response.data["id"]
+    album_1 = Album.objects.get(pk=new_id)
+    check_entity(response.request, album_1, album_data_1, fields=["title", "year"])
+    db_id, expected_id = str(album_1.artist.id), album_data_1["artist_id"]
+    assert db_id == expected_id, ERROR_OBJECT_INDENTITY.format(
+        method="POST", url=url, obj=album_1.artist, id=db_id, expected_id=expected_id
+    )
+    assert set(str(track.id) for track in album_1.tracks.all()) == set(
+        track["id"] for track in album_data_1["tracks"]
+    ), ERROR_OBJECT_INDENTITIES.format(method="POST", url=url)

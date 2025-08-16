@@ -43,3 +43,26 @@ def albums(artists, tracks):
 @pytest.fixture
 def artist_with_albums(albums):
     return albums[0].artist
+
+
+@pytest.fixture
+def albums_data(tracks, artists):
+    album_data_1 = {
+        "title": "New Album 1",
+        "artist_id": str(artists[0].id),
+        "year": 2030,
+        "tracks": [
+            {"id": str(tracks[0].id), "position": 1},
+            {"id": str(tracks[1].id), "position": 2},
+        ],
+    }
+    album_data_2 = {
+        "title": "New Album 2",
+        "artist_id": str(artists[1].id),
+        "year": 2035,
+        "tracks": [
+            {"id": str(tracks[1].id), "position": 1},
+            {"id": str(tracks[2].id), "position": 2},
+        ],
+    }
+    return album_data_1, album_data_2
