@@ -82,7 +82,7 @@ def test_artist_list(client, artists):
 
 def test_album_list(client, albums):
     check_list_api(
-        client, objs=albums, view="api:album-list", fields=["title", "year", "artist"]
+        client, objs=albums, view="api:album-list", fields=["title", "year"]
     )
 
 

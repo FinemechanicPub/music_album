@@ -42,7 +42,7 @@ class AlbumReferenceSerializer(serializers.ModelSerializer):
 
 
 class AlbumSerializer(serializers.ModelSerializer):
-    artist = serializers.StringRelatedField()
+    artist = ArtistReferenceSerializer(read_only=True)
 
     class Meta:
         model = Album
