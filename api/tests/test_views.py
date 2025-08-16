@@ -102,7 +102,9 @@ def test_album_get(client, albums):
     for album in albums:
         url = reverse("api:album-detail", args=[album.pk])
         response = client.get(url)
-        check_enity(url, album, response.data, ["id", "title", "year", "artist"])
+        check_enity(url, album, response.data, ["id", "title", "year"])
+        artist = album.artist
+        check_enity(url, artist, response.data["artist"], fields=["id", "name"])
         response_tracks = group_by_id(response.data["tracks"])
         for albumtrack in album.albumtrack_set.all():
             response_track = response_tracks[str(albumtrack.track_id)]
