@@ -12,8 +12,13 @@ ERROR_NO_OBJECT = (
 )
 
 ERROR_OBJECT_FIELD = (
-    "{method} request on {url} returned object {obj} with attribute"
-    "atrr={attr}, while expected {expected}"
+    "{method} request on {url} returned object '{obj}' with attribute "
+    "'{attr}' = {actual}, while expected {expected}"
+)
+
+ERROR_OBJECT_INDENTITY = (
+    "{method} request on {url} created object '{obj}' with "
+    "id={id}, while expected {expected}"
 )
 
 MISCONFIGURATION = (
@@ -22,13 +27,16 @@ MISCONFIGURATION = (
 )
 
 
-def check_enity(url, obj, data: dict, fields: list[str]):
+def check_entity(request: dict, obj, data: dict, fields: list[str]):
+    method = request["REQUEST_METHOD"]
+    url = request["PATH_INFO"]
     for field in fields:
         assert str(getattr(obj, field)) == str(data[field]), ERROR_OBJECT_FIELD.format(
-            method="GET",
+            method=method,
             url=url,
             obj=obj,
             attr=field,
+            actual=str(data[field]),
             expected=str(getattr(obj, field)),
         )
 
@@ -45,14 +53,14 @@ def check_list_api(client: Client, objs, view: str, fields: list):
     response = client.get(url)
     count = response.data["count"]
     assert count == len(objs), ERROR_COUNT.format(
-        method="GET", url=url, actual=len(objs)
+        method="GET", url=url, actual=len(objs), expected=count
     )
     data = group_by_id(response.data["results"])
     for obj in objs:
         assert str(obj.pk) in data, ERROR_NO_OBJECT.format(
             id=str(obj.pk), method="GET", url=url
         )
-        check_enity(url, obj, data[str(obj.pk)], fields)
+        check_entity(response.request, obj, data[str(obj.pk)], fields)
 
 
 def test_track_list(client, tracks):
@@ -73,13 +81,16 @@ def test_track_get(client, tracks, albums):
     for track in tracks:
         url = reverse("api:track-detail", args=[track.pk])
         response = client.get(url)
-        check_enity(url, track, response.data, ["id", "title"])
+        check_entity(response.request, track, response.data, ["id", "title"])
         response_albums = group_by_id(response.data["albums"])
         count = track.albumtrack_set.count()
         assert count > 0, MISCONFIGURATION.format(model="Track", related="AlbumTrack")
         for albumtrack in track.albumtrack_set.all():
-            check_enity(
-                url, albumtrack, response_albums[str(albumtrack.album_id)], ["position"]
+            check_entity(
+                response.request,
+                albumtrack,
+                response_albums[str(albumtrack.album_id)],
+                ["position"],
             )
 
 
@@ -87,7 +98,7 @@ def test_artist_get(client, artists):
     for artist in artists:
         url = reverse("api:artist-detail", args=[artist.pk])
         response = client.get(url)
-        check_enity(url, artist, response.data, ["id", "name"])
+        check_entity(response.request, artist, response.data, ["id", "name"])
 
 
 def test_artist_albums_get(client, artist_with_albums):
@@ -95,18 +106,20 @@ def test_artist_albums_get(client, artist_with_albums):
     response = client.get(url)
     response_albums = group_by_id(response.data["albums"])
     for album in artist_with_albums.albums.all():
-        check_enity(url, album, response_albums[str(album.pk)], ["title"])
+        check_entity(response.request, album, response_albums[str(album.pk)], ["title"])
 
 
 def test_album_get(client, albums):
     for album in albums:
         url = reverse("api:album-detail", args=[album.pk])
         response = client.get(url)
-        check_enity(url, album, response.data, ["id", "title", "year"])
+        check_entity(response.request, album, response.data, ["id", "title", "year"])
         artist = album.artist
-        check_enity(url, artist, response.data["artist"], fields=["id", "name"])
+        check_entity(
+            response.request, artist, response.data["artist"], fields=["id", "name"]
+        )
         response_tracks = group_by_id(response.data["tracks"])
         for albumtrack in album.albumtrack_set.all():
             response_track = response_tracks[str(albumtrack.track_id)]
-            check_enity(url, albumtrack, response_track, ["position"])
+            check_entity(response.request, albumtrack, response_track, ["position"])
             check_enity(url, albumtrack.track, response_track, ["title"])
