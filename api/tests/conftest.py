@@ -1,7 +1,21 @@
 import random
+
 import pytest
+from rest_framework.authtoken.models import Token
+from rest_framework.test import APIClient
 
 from albums.models import Album, Artist, Track
+
+
+@pytest.fixture()
+def admin_api_client(
+    db: None,
+    admin_user,
+) -> APIClient:
+    token = Token.objects.create(user=admin_user)
+    client = APIClient()
+    client.credentials(HTTP_AUTHORIZATION='Bearer ' + token.key)
+    return client
 
 
 @pytest.fixture

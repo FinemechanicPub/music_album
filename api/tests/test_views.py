@@ -134,12 +134,13 @@ def test_album_get(client, albums):
             check_entity(response.request, albumtrack.track, response_track, ["title"])
 
 
-def test_album_create(client, albums_data):
+def test_album_create(admin_api_client, albums_data):
     album_data_1, album_data_2 = albums_data
     url = reverse("api:album-list")
-    response = client.post(
+    response = admin_api_client.post(
         url, json.dumps(album_data_1), content_type="application/json"
     )
+    print(response.request)
     new_id = response.data["id"]
     album_1 = Album.objects.get(pk=new_id)
     check_entity(response.request, album_1, album_data_1, fields=["title", "year"])
