@@ -1,5 +1,7 @@
 from drf_spectacular.utils import extend_schema
 from rest_framework import viewsets
+from rest_framework.authtoken.views import ObtainAuthToken
+from rest_framework.parsers import JSONParser
 
 from albums.models import Album, Artist, Track
 from api.filters import AlbumFilter, TrackFilter
@@ -56,3 +58,8 @@ class TrackViewset(viewsets.ModelViewSet):
         if self.action != "list":
             return TrackDetailedSerializer
         return super().get_serializer_class()
+
+
+@extend_schema(tags=["Auth"])
+class AuthTokenAPIView(ObtainAuthToken):
+    parser_classes = [JSONParser]

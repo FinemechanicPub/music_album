@@ -16,6 +16,7 @@ router_v1.register("tracks", views.TrackViewset, basename="track")
 
 urlpatterns = [
     path("v1/", include(router_v1.urls)),
+    path("v1/auth/token/", views.AuthTokenAPIView.as_view(), name="token"),
     path("v1/schema/", SpectacularAPIView.as_view(), name="schema"),
     path(
         "v1/schema/swagger-ui/",
