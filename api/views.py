@@ -1,3 +1,4 @@
+from drf_spectacular.utils import extend_schema
 from rest_framework import viewsets
 
 from albums.models import Album, Artist, Track
@@ -12,6 +13,7 @@ from api.serializers import (
 )
 
 
+@extend_schema(tags=["Album"])
 class AlbumViewset(viewsets.ModelViewSet):
     queryset = Album.objects.select_related("artist").order_by("title")
     serializer_class = AlbumSerializer
@@ -28,6 +30,7 @@ class AlbumViewset(viewsets.ModelViewSet):
         return super().get_serializer_class()
 
 
+@extend_schema(tags=["Artist"])
 class ArtistViewset(viewsets.ModelViewSet):
     queryset = Artist.objects.order_by("name")
     serializer_class = ArtistReferenceSerializer
@@ -38,6 +41,7 @@ class ArtistViewset(viewsets.ModelViewSet):
         return super().get_serializer_class()
 
 
+@extend_schema(tags=["Track"])
 class TrackViewset(viewsets.ModelViewSet):
     queryset = Track.objects.order_by("title")
     serializer_class = TrackReferenceSerializer
