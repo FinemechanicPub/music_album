@@ -2,9 +2,11 @@ from drf_spectacular.utils import extend_schema
 from rest_framework import viewsets
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.parsers import JSONParser
+from rest_framework.permissions import IsAdminUser
 
 from albums.models import Album, Artist, Track
 from api.filters import AlbumFilter, TrackFilter
+from api.permissions import ReadOnly
 from api.serializers import (
     AlbumSerializer,
     AlbumDetailedSerializer,
@@ -17,6 +19,7 @@ from api.serializers import (
 
 @extend_schema(tags=["Album"])
 class AlbumViewset(viewsets.ModelViewSet):
+    permission_classes = [IsAdminUser | ReadOnly]
     queryset = Album.objects.select_related("artist").order_by("title")
     serializer_class = AlbumSerializer
     filterset_class = AlbumFilter
@@ -34,6 +37,7 @@ class AlbumViewset(viewsets.ModelViewSet):
 
 @extend_schema(tags=["Artist"])
 class ArtistViewset(viewsets.ModelViewSet):
+    permission_classes = [IsAdminUser | ReadOnly]
     queryset = Artist.objects.order_by("name")
     serializer_class = ArtistReferenceSerializer
 
@@ -45,6 +49,7 @@ class ArtistViewset(viewsets.ModelViewSet):
 
 @extend_schema(tags=["Track"])
 class TrackViewset(viewsets.ModelViewSet):
+    permission_classes = [IsAdminUser | ReadOnly]
     queryset = Track.objects.order_by("title")
     serializer_class = TrackReferenceSerializer
     filterset_class = TrackFilter
