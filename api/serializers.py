@@ -79,6 +79,13 @@ class AlbumDetailedSerializer(serializers.ModelSerializer):
             instance.albumtrack_set.create(**track_data)
         return instance
 
+    def validate_tracks(self, tracks):
+        if len(tracks) != len(set(track["position"] for track in tracks)):
+            raise serializers.ValidationError(
+                "Each track in an album shall have its own unique position"
+            )
+        return tracks
+
     class Meta:
         model = Album
         fields = ["id", "title", "artist", "artist_id", "year", "tracks"]
