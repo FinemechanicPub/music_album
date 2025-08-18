@@ -18,6 +18,7 @@ from api.serializers import (
 
 
 @extend_schema(tags=["Album"])
+@extend_schema(methods=["GET"], auth=[])
 class AlbumViewset(viewsets.ModelViewSet):
     permission_classes = [IsAdminUser | ReadOnly]
     queryset = Album.objects.select_related("artist").order_by("title")
@@ -36,6 +37,7 @@ class AlbumViewset(viewsets.ModelViewSet):
 
 
 @extend_schema(tags=["Artist"])
+@extend_schema(methods=["GET"], auth=[])
 class ArtistViewset(viewsets.ModelViewSet):
     permission_classes = [IsAdminUser | ReadOnly]
     queryset = Artist.objects.order_by("name")
@@ -48,6 +50,7 @@ class ArtistViewset(viewsets.ModelViewSet):
 
 
 @extend_schema(tags=["Track"])
+@extend_schema(methods=["GET"], auth=[])
 class TrackViewset(viewsets.ModelViewSet):
     permission_classes = [IsAdminUser | ReadOnly]
     queryset = Track.objects.order_by("title")
